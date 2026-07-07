@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.okhttp.logging)
     
     implementation(libs.play.services.ads)
+    implementation(libs.androidx.work.runtime.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

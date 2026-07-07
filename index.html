@@ -3,54 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أسعار الذهب اليومية - الإمارات</title>
+    <title>UAE Gold Market | سوق الذهب في الإمارات</title>
+    <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header>
+            <div class="logo-container">
+                <img src="logo.png" alt="UAE Gold Market Logo" class="brand-logo">
+            </div>
             <h1 id="title">سوق الذهب في الإمارات</h1>
             <div class="controls">
-                <button id="toggleCurrency">تغيير العملة (درهم/دولار)</button>
-                <button id="toggleLang">English</button>
+                <button id="toggleCurrency" class="btn-premium">
+                    <span class="icon-swap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16l-4-4 4-4m14 4H3m10-8l4 4-4 4m-7 4h14"></path></svg>
+                    </span>
+                    <span id="currencyText">تغيير العملة (درهم/دولار)</span>
+                </button>
+                <button id="toggleLang" class="btn-premium">English</button>
+            </div>
+            <div class="live-status">
+                <span class="dot"></span>
+                <span id="statusText" data-ar="مباشر" data-en="LIVE">مباشر</span>
+                <span id="updatedAt">آخر تحديث: --</span>
             </div>
         </header>
 
-        <div id="loading" class="loader">جاري التحميل...</div>
+        <div id="loading" class="loader">
+            <div class="spinner"></div>
+            <p>جاري التحميل...</p>
+        </div>
 
         <main id="main-content" class="hidden">
-            <div class="price-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="label" data-en="Gold 24K" data-ar="ذهب عيار 24">ذهب عيار 24</span>
-                        <div class="icon">AU</div>
-                    </div>
-                    <div class="price" id="p24">--</div>
+            <section class="price-section">
+                <h2 class="section-title" data-ar="أسعار الذهب الخام الإرشادية" data-en="Indicative Raw Gold Rates">أسعار الذهب الخام الإرشادية</h2>
+                <div class="price-grid">
+                    <!-- Cards will be populated by JS -->
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="label" data-en="Gold 22K" data-ar="ذهب عيار 22">ذهب عيار 22</span>
-                        <div class="icon">AU</div>
-                    </div>
-                    <div class="price" id="p22">--</div>
+            </section>
+
+            <section class="ounce-section">
+                <div id="ounceCard" class="card card-full premium-gold-card">
+                    <!-- Ounce data populated by JS -->
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="label" data-en="Gold 21K" data-ar="ذهب عيار 21">ذهب عيار 21</span>
-                        <div class="icon">AU</div>
+            </section>
+
+            <section class="calculator-section">
+                <div class="card card-full">
+                    <h3 class="card-title" data-ar="حاسبة الذهب" data-en="Gold Calculator">حاسبة الذهب</h3>
+                    <div class="calc-grid">
+                        <div class="input-group">
+                            <label for="calcWeight" data-ar="الوزن (غرام)" data-en="Weight (Grams)">الوزن (غرام)</label>
+                            <input type="number" id="calcWeight" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label for="calcKarat" data-ar="العيار" data-en="Karat">العيار</label>
+                            <select id="calcKarat">
+                                <option value="24">24K</option>
+                                <option value="22">22K</option>
+                                <option value="21">21K</option>
+                                <option value="18">18K</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="price" id="p21">--</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="label" data-en="Gold 18K" data-ar="ذهب عيار 18">ذهب عيار 18</span>
-                        <div class="icon">AU</div>
+                    <div class="calc-result">
+                        <span class="result-label" data-ar="القيمة التقريبية:" data-en="Approximate Value:">القيمة التقريبية:</span>
+                        <span id="calcValue">0.00 AED</span>
                     </div>
-                    <div class="price" id="p18">--</div>
+                    <p class="disclaimer-text sm" data-ar="القيمة المحسوبة تقريبية ولا تشمل المصنعية أو ضريبة القيمة المضافة أو هامش المتجر." data-en="The calculated value is approximate and does not include making charges, VAT, or retailer margin.">
+                        القيمة المحسوبة تقريبية ولا تشمل المصنعية أو ضريبة القيمة المضافة أو هامش المتجر.
+                    </p>
                 </div>
-            </div>
-            <p id="updatedAt">آخر تحديث: --</p>
+            </section>
+
+            <section class="summary-section">
+                <div class="card card-full secondary-card">
+                    <h3 class="card-title" data-ar="ملخص السوق" data-en="Market Summary">ملخص السوق</h3>
+                    <p id="marketSummary" class="summary-text">
+                        <!-- Summary text populated by JS -->
+                    </p>
+                </div>
+            </section>
+
+            <section class="legal-section">
+                <div class="disclaimer-box">
+                    <p data-ar="الأسعار المعروضة إرشادية وتعتمد على سعر الذهب الخام لكل غرام. قد تختلف أسعار محلات الذهب بسبب المصنعية، ضريبة القيمة المضافة، وهامش المتجر. هذا التطبيق لا يقدم نصائح مالية أو استثمارية، ولا يضمن دقة الأسعار في جميع الأوقات."
+                       data-en="Displayed prices are indicative raw gold rates per gram. Jewellery shop prices may differ due to making charges, VAT, and retailer margins. This app does not provide financial or investment advice and does not guarantee price accuracy at all times.">
+                        الأسعار المعروضة إرشادية وتعتمد على سعر الذهب الخام لكل غرام. قد تختلف أسعار محلات الذهب بسبب المصنعية، ضريبة القيمة المضافة، وهامش المتجر. هذا التطبيق لا يقدم نصائح مالية أو استثمارية، ولا يضمن دقة الأسعار في جميع الأوقات.
+                    </p>
+                    <p data-ar="يتم جلب الأسعار من مصادر بيانات خارجية وقد يحدث تأخير أو اختلاف في التحديث."
+                       data-en="Prices are fetched from third-party data sources and may be delayed or differ from live market rates.">
+                        يتم جلب الأسعار من مصادر بيانات خارجية وقد يحدث تأخير أو اختلاف في التحديث.
+                    </p>
+                    <p data-ar="قد يستخدم التطبيق خدمات إعلانية تابعة لجهات خارجية مثل Google AdMob، وقد تجمع هذه الخدمات بيانات مثل معرف الإعلان ومعلومات الجهاز والتفاعل مع الإعلانات وفقًا لسياساتها."
+                       data-en="The app may use third-party advertising services such as Google AdMob. These services may collect data such as advertising ID, device information, and ad interaction data according to their policies.">
+                        قد يستخدم التطبيق خدمات إعلانية تابعة لجهات خارجية مثل Google AdMob، وقد تجمع هذه الخدمات بيانات مثل معرف الإعلان ومعلومات الجهاز والتفاعل مع الإعلانات وفقًا لسياساتها.
+                    </p>
+                </div>
+            </section>
         </main>
+
+        <footer>
+            <p id="footerAdvice" data-ar="ليس نصيحة مالية أو استثمارية." data-en="Not financial or investment advice.">ليس نصيحة مالية أو استثمارية.</p>
+            <p>&copy; 2025 UAE Gold Market</p>
+        </footer>
     </div>
     <script src="script.js"></script>
 </body>
