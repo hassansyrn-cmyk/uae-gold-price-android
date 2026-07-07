@@ -54,9 +54,19 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MobileAds.initialize(this) {}
-        
-        GoldPriceWorker.enqueue(this)
+
+        try {
+            MobileAds.initialize(this) {}
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            GoldPriceWorker.enqueue(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         askNotificationPermission()
 
         setContent {
