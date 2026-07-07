@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">أسعار الذهب اليومية</string>
+    <string name="gold_price_24k">ذهب عيار 24</string>
+    <string name="gold_price_22k">ذهب عيار 22</string>
+    <string name="gold_price_21k">ذهب عيار 21</string>
+    <string name="gold_price_18k">ذهب عيار 18</string>
+    <string name="aed">درهم</string>
+    <string name="usd">دولار</string>
+    <string name="last_updated">آخر تحديث: %1$s</string>
+    <string name="switch_currency">تغيير العملة</string>
+    <string name="uae_title">سوق الذهب في الإمارات</string>
+    <string name="loading">جاري التحميل...</string>
+    <string name="error_loading">خطأ في تحميل البيانات</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="notification_body">سعر الذهب المباشر: %1$s درهم. اضغط للتحقق من جميع الأسعار.</string>
+    <string name="notification_title_alert">تنبيه سعر الذهب</string>
+    <string name="notification_title_daily">تحديث سعر الذهب اليومي</string>
+    <string name="market_summary_template">سعر الذهب اليوم في الإمارات عيار 24 هو %1$s %2$s. سعر الأونصة العالمي يبلغ %3$s دولار، ما يعادل %4$s درهم إماراتي. السوق حالياً مستقر.</string>
+    <string name="indicative_rates_title">أسعار الذهب الخام الإرشادية</string>
+    <string name="global_ounce_title">سعر الذهب العالمي للأونصة</string>
+    <string name="gold_calculator">حاسبة الذهب</string>
+    <string name="weight_grams">الوزن (غرام)</string>
+    <string name="karat">العيار</string>
+    <string name="approx_value">القيمة التقريبية:</string>
+    <string name="calc_disclaimer">القيمة المحسوبة تقريبية ولا تشمل المصنعية أو ضريبة القيمة المضافة أو هامش المتجر.</string>
+    <string name="market_summary">ملخص السوق</string>
+    <string name="main_disclaimer">الأسعار المعروضة إرشادية وتعتمد على سعر الذهب الخام لكل غرام. قد تختلف أسعار محلات الذهب بسبب المصنعية، ضريبة القيمة المضافة، وهامش المتجر. هذا التطبيق لا يقدم نصائح مالية أو استثمارية، ولا يضمن دقة الأسعار في جميع الأوقات.</string>
+    <string name="data_source_disclaimer">يتم جلب الأسعار من مصادر بيانات خارجية وقد يحدث تأخير أو اختلاف في التحديث.</string>
+    <string name="privacy_admob_note">قد يستخدم التطبيق خدمات إعلانية تابعة لجهات خارجية مثل Google AdMob، وقد تجمع هذه الخدمات بيانات مثل معرف الإعلان ومعلومات الجهاز والتفاعل مع الإعلانات وفقًا لسياساتها.</string>
+    <string name="footer_advice">ليس نصيحة مالية أو استثمارية.</string>
+    <string name="calculated_from_raw">محسوب من سعر الغرام الخام</string>
+    <string name="live">مباشر</string>
+    <string name="gram">غرام</string>
+</resources>

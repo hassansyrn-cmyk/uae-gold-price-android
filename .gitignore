@@ -1,0 +1,17 @@
+# Ignore Gradle artifacts
+.gradle/
+build/
+
+# Ignore Android Studio / IntelliJ files
+.idea/
+*.iml
+local.properties
+
+# Ignore OS files
+.DS_Store
+
+# Ignore build artifacts
+app/build/
+capture/
+*.apk
+*.aab
