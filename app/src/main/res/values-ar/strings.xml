@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">أسعار الذهب اليومية</string>
+    <string name="app_subtitle">أسعار ذهب فورية بلمسة فخامة</string>
     <string name="gold_price_24k">ذهب عيار 24</string>
     <string name="gold_price_22k">ذهب عيار 22</string>
     <string name="gold_price_21k">ذهب عيار 21</string>
