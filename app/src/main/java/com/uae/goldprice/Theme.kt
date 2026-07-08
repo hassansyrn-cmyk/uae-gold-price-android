@@ -1,13 +1,10 @@
 package com.uae.goldprice
 
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 
 // ============================================================
 // Premium Light Luxury Theme — Warm Beige + Soft Gold + Light Emerald
@@ -79,16 +76,4 @@ object GoldColors {
     val TextPrimary = TextPrimaryColor
     val TextMuted = TextMutedColor
     val TextFaint = TextFaintColor
-}
-
-// ==================== رمز الدرهم البسيط ====================
-@Composable
-fun DirhamSymbol(modifier: Modifier = Modifier, color: Color = GoldColors.TextMuted) {
-    Text(
-        text = "د.إ",
-        modifier = modifier,
-        color = color,
-        fontSize = 12.sp,
-        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-    )
 }
