@@ -60,23 +60,11 @@ class MainActivity : ComponentActivity() {
     ) { isGranted: Boolean -> }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // تطبيق اللغة المحفوظة قبل تحميل أي شيء
         applyLanguageFromPreferences()
-
         super.onCreate(savedInstanceState)
 
-        try {
-            MobileAds.initialize(this) {}
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        try {
-            GoldPriceWorker.enqueue(this)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
+        try { MobileAds.initialize(this) {} } catch (e: Exception) { e.printStackTrace() }
+        try { GoldPriceWorker.enqueue(this) } catch (e: Exception) { e.printStackTrace() }
         askNotificationPermission()
 
         setContent {
@@ -164,17 +152,13 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                 item {
                     Spacer(modifier = Modifier.height(28.dp))
 
-                    // Logo
                     Box(contentAlignment = Alignment.Center) {
                         Box(
                             modifier = Modifier
                                 .size(104.dp)
                                 .background(
                                     Brush.radialGradient(
-                                        colors = listOf(
-                                            GoldColors.Gold.copy(alpha = 0.22f),
-                                            Color.Transparent
-                                        )
+                                        colors = listOf(GoldColors.Gold.copy(alpha = 0.22f), Color.Transparent)
                                     ),
                                     CircleShape
                                 )
@@ -182,9 +166,7 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_logo_premium),
                             contentDescription = "UAE Gold Market Logo",
-                            modifier = Modifier
-                                .size(84.dp)
-                                .clip(CircleShape),
+                            modifier = Modifier.size(84.dp).clip(CircleShape),
                             contentScale = ContentScale.Fit
                         )
                     }
@@ -207,7 +189,6 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Language & Currency buttons
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -228,12 +209,10 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                                 isAr = !isAr
                                 val newLanguage = if (isAr) "ar" else "en"
 
-                                // حفظ اللغة
                                 val editor = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
                                 editor.putString("language", newLanguage)
                                 editor.apply()
 
-                                // إعادة تشغيل التطبيق
                                 (context as? ComponentActivity)?.recreate()
                             }
                         )
@@ -241,22 +220,14 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
 
                     Spacer(modifier = Modifier.height(18.dp))
 
-                    // Live status
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         PulsingLiveDot()
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            stringResource(R.string.live),
-                            color = GoldColors.EmeraldGlow,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text(stringResource(R.string.live), color = GoldColors.EmeraldGlow, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(16.dp))
                         if (uiState is UiState.Success) {
                             Text(
-                                stringResource(
-                                    R.string.last_updated,
-                                    formatTime((uiState as UiState.Success).data.updatedAt)
-                                ),
+                                stringResource(R.string.last_updated, formatTime((uiState as UiState.Success).data.updatedAt)),
                                 color = GoldColors.TextMuted
                             )
                         }
@@ -275,7 +246,6 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                     is UiState.Success -> {
                         val data = (uiState as UiState.Success).data
 
-                        // Indicative Rates Title
                         item {
                             Text(
                                 stringResource(R.string.indicative_rates_title),
@@ -288,7 +258,6 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                             Spacer(modifier = Modifier.height(16.dp))
                         }
 
-                        // Price Cards
                         item {
                             val multiplier = if (isAed) 3.6725 else 1.0
                             val currency = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd)
@@ -306,7 +275,6 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                             Spacer(modifier = Modifier.height(24.dp))
                         }
 
-                        // Ounce Card
                         item {
                             val multiplier = if (isAed) 3.6725 else 1.0
                             val currency = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd)
@@ -316,19 +284,16 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                             Spacer(modifier = Modifier.height(24.dp))
                         }
 
-                        // Calculator
                         item {
                             GoldCalculator(data, isAed, 3.6725)
                             Spacer(modifier = Modifier.height(24.dp))
                         }
 
-                        // Market Summary
                         item {
                             MarketSummaryCard(data, isAed, 3.6725)
                             Spacer(modifier = Modifier.height(24.dp))
                         }
 
-                        // Legal
                         item {
                             LegalSection()
                         }
@@ -351,7 +316,7 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
     }
 }
 
-// ==================== باقي الدوال (كاملة) ====================
+// ==================== الدوال المساعدة ====================
 
 @Composable
 fun PulsingLiveDot() {
@@ -443,7 +408,7 @@ fun GoldPriceCardSmall(modifier: Modifier, karat: String, price: Double, currenc
             Text("%.2f".format(price), fontSize = 19.sp, fontWeight = FontWeight.Bold, color = GoldColors.Gold)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (currency == stringResource(R.string.aed)) {
-                    DirhamSymbol(modifier = Modifier.size(12.dp), color = GoldColors.TextMuted)
+                    Text("د.إ", fontSize = 10.sp, color = GoldColors.TextMuted)
                 } else {
                     Text("$", fontSize = 10.sp, color = GoldColors.TextMuted)
                 }
@@ -472,7 +437,7 @@ fun OunceCard(price: Double, currency: String, isAed: Boolean, priceUsd: Double)
                 Text("%.2f".format(price), fontSize = 26.sp, fontWeight = FontWeight.Bold, color = GoldColors.TextPrimary)
                 Spacer(modifier = Modifier.width(4.dp))
                 if (isAed) {
-                    DirhamSymbol(modifier = Modifier.padding(bottom = 6.dp).size(20.dp), color = GoldColors.Gold)
+                    Text("د.إ", fontSize = 16.sp, color = GoldColors.Gold, modifier = Modifier.padding(bottom = 6.dp))
                 } else {
                     Text("$", fontSize = 14.sp, color = GoldColors.Gold, modifier = Modifier.padding(bottom = 4.dp))
                 }
@@ -482,7 +447,7 @@ fun OunceCard(price: Double, currency: String, isAed: Boolean, priceUsd: Double)
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("%.2f ".format(priceUsd * 3.6725), fontSize = 12.sp, color = GoldColors.TextMuted)
-                    DirhamSymbol(modifier = Modifier.size(12.dp), color = GoldColors.TextMuted)
+                    Text("د.إ", fontSize = 10.sp, color = GoldColors.TextMuted)
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -576,7 +541,7 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("%.2f ".format(result), fontWeight = FontWeight.Bold, fontSize = 20.sp, color = GoldColors.Gold)
                         if (isAed) {
-                            DirhamSymbol(modifier = Modifier.size(20.dp), color = GoldColors.Gold)
+                            Text("د.إ", fontSize = 16.sp, color = GoldColors.Gold)
                         } else {
                             Text("$", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = GoldColors.Gold)
                         }
