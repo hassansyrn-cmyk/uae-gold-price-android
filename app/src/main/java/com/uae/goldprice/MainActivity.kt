@@ -63,20 +63,20 @@ import java.util.*
 
 // ==================== ألوان التصميم الفاخر (Premium Palette) ====================
 object PremiumColors {
-    val BackgroundBeige = Color(0xFFF9F7F2) // خلفية بيج دافئة ومريحة
+    val BackgroundBeige = Color(0xFFF9F7F2)
     val SurfaceWhite = Color(0xFFFFFFFF)
-    val TextPrimary = Color(0xFF2C2A28) // رمادي داكن مائل للبني للقراءة المريحة
+    val TextPrimary = Color(0xFF2C2A28)
     val TextMuted = Color(0xFF8C8781)
     val TextFaint = Color(0xFFB5B0A8)
     
-    val SageGreen = Color(0xFF7A9382) // أخضر مريمية أنيق
+    val SageGreen = Color(0xFF7A9382)
     val SageGreenLight = Color(0xFFE8EFEA)
     
-    val LuxuryGold = Color(0xFFC7A556) // ذهبي هادئ وفاخر
+    val LuxuryGold = Color(0xFFC7A556)
     val LuxuryGoldLight = Color(0xFFFDF8EE)
     
-    val BorderLight = Color(0xFFEFECE5) // حدود ناعمة جداً
-    val ShadowColor = Color(0x0F4A4640) // ظل دافئ وخفيف
+    val BorderLight = Color(0xFFEFECE5)
+    val ShadowColor = Color(0x0F4A4640)
 }
 
 class MainActivity : ComponentActivity() {
@@ -87,8 +87,23 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean -> }
 
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        // Default to "ar" on first install
+        val languageCode = prefs.getString("language", "ar") ?: "ar"
+
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+
+        val config = Configuration(newBase.resources.configuration)
+        config.setLocale(locale)
+        config.setLayoutDirection(locale)
+
+        val context = newBase.createConfigurationContext(config)
+        super.attachBaseContext(context)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        applyLanguageFromPreferences()
         super.onCreate(savedInstanceState)
 
         try { MobileAds.initialize(this) {} } catch (e: Exception) { e.printStackTrace() }
@@ -105,20 +120,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    private fun applyLanguageFromPreferences() {
-        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val languageCode = prefs.getString("language", "ar") ?: "ar"
-
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-
-        val config = Configuration(resources.configuration)
-        config.setLocale(locale)
-
-        @Suppress("DEPRECATION")
-        resources.updateConfiguration(config, resources.displayMetrics)
     }
 
     private fun askNotificationPermission() {
@@ -140,9 +141,8 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
     val context = LocalContext.current
 
     val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    var isAr by remember {
-        mutableStateOf(prefs.getString("language", "ar") == "ar")
-    }
+    // Read the saved language, default to Arabic
+    val isAr = prefs.getString("language", "ar") == "ar"
 
     val layoutDirection = if (isAr) LayoutDirection.Rtl else LayoutDirection.Ltr
 
@@ -235,9 +235,7 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                             icon = null,
                             label = if (isAr) "English" else "العربية",
                             onClick = {
-                                isAr = !isAr
-                                val newLanguage = if (isAr) "ar" else "en"
-
+                                val newLanguage = if (isAr) "en" else "ar"
                                 val editor = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
                                 editor.putString("language", newLanguage)
                                 editor.apply()
@@ -405,7 +403,7 @@ fun PulsingLiveDot() {
     )
     Box(
         modifier = Modifier
-            .size(6.dp) // أصغر وأكثر أناقة
+            .size(6.dp)
             .background(PremiumColors.SageGreen.copy(alpha = alpha), CircleShape)
     )
 }
@@ -629,7 +627,6 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
 
                 var expanded by remember { mutableStateOf(false) }
                 
-                // Custom Dropdown trigger to match TextField exactly
                 Box(
                     modifier = Modifier
                         .weight(1f)
