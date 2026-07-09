@@ -100,9 +100,15 @@ class MainActivity : ComponentActivity() {
         try { GoldPriceWorker.enqueue(this) } catch (e: Exception) { e.printStackTrace() }
         askNotificationPermission()
 
+        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val skipSplashOnce = prefs.getBoolean("skip_splash_once", false)
+        if (skipSplashOnce) {
+            prefs.edit().putBoolean("skip_splash_once", false).apply()
+        }
+
         setContent {
             GoldTheme {
-                var showSplash by remember { mutableStateOf(true) }
+                var showSplash by remember { mutableStateOf(!skipSplashOnce) }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -175,7 +181,7 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                                 .background(Color.Transparent)
                                 .padding(vertical = 4.dp)
                         ) {
-                            AdBanner() // يستدعي الآن الملف الخارجي الحقيقي AdBanner.kt تلقائياً
+                            AdBanner() // يستدعي الملف الخارجي الحقيقي AdBanner.kt تلقائياً
                         }
                     }
                 }
@@ -192,28 +198,25 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                         Spacer(modifier = Modifier.height(36.dp))
 
                         Box(contentAlignment = Alignment.Center) {
-                            Box(
-                                modifier = Modifier
-                                    .size(110.dp)
-                                    .background(
-                                        Brush.radialGradient(
-                                            colors = listOf(PremiumColors.LuxuryGold.copy(alpha = 0.2f), Color.Transparent)
-                                        ),
-                                        CircleShape
-                                    )
-                            )
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_logo_premium),
-                                contentDescription = "UAE Gold Market Logo",
-                                modifier = Modifier
-                                    .size(84.dp)
-                                    .clip(CircleShape)
-                                    .shadow(8.dp, CircleShape, ambientColor = PremiumColors.LuxuryGold, spotColor = PremiumColors.LuxuryGold),
-                                contentScale = ContentScale.Fit
-                            )
+                            Surface(
+                                modifier = Modifier.size(112.dp),
+                                shape = RoundedCornerShape(24.dp),
+                                color = PremiumColors.DarkNavyStart,
+                                border = BorderStroke(1.5.dp, PremiumColors.LuxuryGold.copy(alpha = 0.8f)),
+                                shadowElevation = 12.dp
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_logo_premium),
+                                    contentDescription = "UAE Gold Market Logo",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(12.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         Text(
                             text = stringResource(R.string.uae_title),
@@ -254,6 +257,7 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                                     val newLanguage = if (isAr) "en" else "ar"
                                     val editor = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
                                     editor.putString("language", newLanguage)
+                                    editor.putBoolean("skip_splash_once", true)
                                     editor.apply()
                                     (context as? ComponentActivity)?.recreate()
                                 }
@@ -375,7 +379,7 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
     }
 }
 
-// ==================== الدوال المساعدة والأنيميشن المحدثة ====================
+// ==================== الدوال المساعدة والأنيميشن ====================
 
 @Composable
 fun Modifier.bounceClick(): Modifier {
