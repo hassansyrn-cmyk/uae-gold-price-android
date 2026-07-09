@@ -50,26 +50,24 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.ads.MobileAds
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.coroutines.delay
 
-// ==================== ألوان التصميم الفاخر (Premium Palette) ====================
+// ==================== ألوان التصميم الفاخرة المتناسقة مع الشعار ====================
 object PremiumColors {
-    val BackgroundBeige = Color(0xFFF9F7F2)
-    val SurfaceWhite = Color(0xFFFFFFFF)
-    val TextPrimary = Color(0xFF2C2A28)
-    val TextPrimaryDark = Color(0xFF1E1C1A) // تمت إضافته
-    val TextMuted = Color(0xFF8C8781)
-    val TextMutedLight = Color(0xFFA6A29C) // تمت إضافته
-    val TextFaint = Color(0xFFB5B0A8)
-    
-    val SageGreen = Color(0xFF7A9382)
-    val SageGreenLight = Color(0xFFE8EFEA)
+    val DarkNavyStart = Color(0xFF071224)
+    val DarkNavyEnd = Color(0xFF10233D)
+    val CardCream = Color(0xFFFDFBF7)
     
     val LuxuryGold = Color(0xFFC7A556)
+    val LuxuryGoldDark = Color(0xFF9E7E38)
     val LuxuryGoldLight = Color(0xFFFDF8EE)
-    val LuxuryGoldDark = Color(0xFFA48541) // تمت إضافته
     
-    val BorderLight = Color(0xFFEFECE5)
-    val ShadowColor = Color(0x0F4A4640)
+    val TextOnDark = Color(0xFFFFFFFF)
+    val TextInsideCard = Color(0xFF0A1424)
+    val TextMutedLight = Color(0xFFA6A29C)
+    
+    val BorderLight = Color(0xFFE2E8F0)
+    val ShadowColor = Color(0x1A000000)
 }
 
 class MainActivity : ComponentActivity() {
@@ -104,11 +102,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             GoldTheme {
+                var showSplash by remember { mutableStateOf(true) }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = PremiumColors.BackgroundBeige
+                    color = PremiumColors.DarkNavyStart
                 ) {
-                    GoldPriceScreen(viewModel)
+                    if (showSplash) {
+                        PremiumSplashScreen(onSplashFinished = { showSplash = false })
+                    } else {
+                        GoldPriceScreen(viewModel)
+                    }
                 }
             }
         }
@@ -125,6 +129,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// ==================== شاشة الـ Splash Screen الفاخرة ====================
+@Composable
+fun PremiumSplashScreen(onSplashFinished: () -> Unit) {
+    LaunchedEffect(Unit) {
+        delay(1800)
+        onSplashFinished()
+    }
+    Image(
+        painter = painterResource(id = R.drawable.splash_art),
+        contentDescription = "Splash Screen Art",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoldPriceScreen(viewModel: GoldViewModel) {
@@ -137,207 +156,216 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
     val layoutDirection = if (isAr) LayoutDirection.Rtl else LayoutDirection.Ltr
 
     CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
-        Scaffold(
-            containerColor = Color.Transparent,
-            bottomBar = {
-                Column {
-                    HorizontalDivider(color = PremiumColors.BorderLight, thickness = 1.dp)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(PremiumColors.SurfaceWhite)
-                            .padding(vertical = 4.dp)
-                    ) {
-                        AdBanner()
-                    }
-                }
-            }
-        ) { padding ->
-            LazyColumn(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(bottom = 40.dp)
-            ) {
-                item {
-                    Spacer(modifier = Modifier.height(36.dp))
-
-                    Box(contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(PremiumColors.DarkNavyStart, PremiumColors.DarkNavyEnd)
+                    )
+                )
+        ) {
+            Scaffold(
+                containerColor = Color.Transparent,
+                bottomBar = {
+                    Column {
                         Box(
                             modifier = Modifier
-                                .size(110.dp)
-                                .background(
-                                    Brush.radialGradient(
-                                        colors = listOf(PremiumColors.LuxuryGoldLight, Color.Transparent)
-                                    ),
-                                    CircleShape
-                                )
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_logo_premium),
-                            contentDescription = "UAE Gold Market Logo",
-                            modifier = Modifier
-                                .size(84.dp)
-                                .clip(CircleShape)
-                                .shadow(8.dp, CircleShape, ambientColor = PremiumColors.LuxuryGold, spotColor = PremiumColors.LuxuryGold),
-                            contentScale = ContentScale.Fit
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = stringResource(R.string.uae_title),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Black,
-                        color = PremiumColors.TextPrimary,
-                        textAlign = TextAlign.Center,
-                        letterSpacing = (-0.5).sp
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(R.string.app_subtitle),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = PremiumColors.TextMuted,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Medium
-                    )
-
-                    Spacer(modifier = Modifier.height(28.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        PremiumToggleButton(
-                            icon = Icons.Default.Refresh,
-                            label = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd),
-                            onClick = { isAed = !isAed }
-                        )
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        PremiumToggleButton(
-                            icon = null,
-                            label = if (isAr) "English" else "العربية",
-                            onClick = {
-                                val newLanguage = if (isAr) "en" else "ar"
-                                val editor = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
-                                editor.putString("language", newLanguage)
-                                editor.apply()
-                                (context as? ComponentActivity)?.recreate()
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .background(PremiumColors.SurfaceWhite, RoundedCornerShape(50.dp))
-                            .border(1.dp, PremiumColors.BorderLight, RoundedCornerShape(50.dp))
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        PulsingLiveDot()
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            stringResource(R.string.live), 
-                            color = PremiumColors.SageGreen, 
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp
-                        )
-                        if (uiState is UiState.Success) {
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Box(modifier = Modifier.width(1.dp).height(12.dp).background(PremiumColors.BorderLight))
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                stringResource(R.string.last_updated, formatTime((uiState as UiState.Success).data.updatedAt)),
-                                color = PremiumColors.TextMuted,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium
-                            )
+                                .fillMaxWidth()
+                                .background(Color.Transparent)
+                                .padding(vertical = 4.dp)
+                        ) {
+                            AdBanner() // يستدعي الآن الملف الخارجي الحقيقي AdBanner.kt تلقائياً
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(32.dp))
                 }
+            ) { padding ->
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = 40.dp)
+                ) {
+                    item {
+                        Spacer(modifier = Modifier.height(36.dp))
 
-                when (uiState) {
-                    is UiState.Loading -> {
-                        item {
-                            Spacer(modifier = Modifier.height(32.dp))
-                            CircularProgressIndicator(color = PremiumColors.LuxuryGold)
-                        }
-                    }
-                    is UiState.Success -> {
-                        val data = (uiState as UiState.Success).data
-
-                        item {
-                            Text(
-                                stringResource(R.string.indicative_rates_title),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = PremiumColors.TextPrimary,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-                                textAlign = TextAlign.Start
+                        Box(contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier
+                                    .size(110.dp)
+                                    .background(
+                                        Brush.radialGradient(
+                                            colors = listOf(PremiumColors.LuxuryGold.copy(alpha = 0.2f), Color.Transparent)
+                                        ),
+                                        CircleShape
+                                    )
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_logo_premium),
+                                contentDescription = "UAE Gold Market Logo",
+                                modifier = Modifier
+                                    .size(84.dp)
+                                    .clip(CircleShape)
+                                    .shadow(8.dp, CircleShape, ambientColor = PremiumColors.LuxuryGold, spotColor = PremiumColors.LuxuryGold),
+                                contentScale = ContentScale.Fit
+                            )
                         }
 
-                        item {
-                            val multiplier = if (isAed) 3.6725 else 1.0
-                            val currency = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd)
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                                    GoldPriceCardSmall(Modifier.weight(1f), "24K", data.karat24 * multiplier, currency)
-                                    GoldPriceCardSmall(Modifier.weight(1f), "22K", data.karat22 * multiplier, currency)
+                        Text(
+                            text = stringResource(R.string.uae_title),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Black,
+                            color = PremiumColors.TextOnDark,
+                            textAlign = TextAlign.Center,
+                            letterSpacing = (-0.5).sp
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.app_subtitle),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = PremiumColors.LuxuryGold,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Medium
+                        )
+
+                        Spacer(modifier = Modifier.height(28.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            PremiumToggleButton(
+                                icon = Icons.Default.Refresh,
+                                label = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd),
+                                onClick = { isAed = !isAed }
+                            )
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            PremiumToggleButton(
+                                icon = null,
+                                label = if (isAr) "English" else "العربية",
+                                onClick = {
+                                    val newLanguage = if (isAr) "en" else "ar"
+                                    val editor = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
+                                    editor.putString("language", newLanguage)
+                                    editor.apply()
+                                    (context as? ComponentActivity)?.recreate()
                                 }
-                                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                                    GoldPriceCardSmall(Modifier.weight(1f), "21K", data.karat21 * multiplier, currency)
-                                    GoldPriceCardSmall(Modifier.weight(1f), "18K", data.karat18 * multiplier, currency)
-                                }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .background(PremiumColors.DarkNavyStart, RoundedCornerShape(50.dp))
+                                .border(1.dp, PremiumColors.LuxuryGold.copy(alpha = 0.3f), RoundedCornerShape(50.dp))
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            PulsingLiveDot()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                stringResource(R.string.live), 
+                                color = PremiumColors.LuxuryGold, 
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
+                            if (uiState is UiState.Success) {
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Box(modifier = Modifier.width(1.dp).height(12.dp).background(PremiumColors.LuxuryGold.copy(alpha = 0.3f)))
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    stringResource(R.string.last_updated, formatTime((uiState as UiState.Success).data.updatedAt)),
+                                    color = PremiumColors.TextOnDark.copy(alpha = 0.7f),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium
+                               )
                             }
-                            Spacer(modifier = Modifier.height(32.dp))
                         }
 
-                        item {
-                            val multiplier = if (isAed) 3.6725 else 1.0
-                            val currency = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd)
-                            val ounceUsd = data.karat24 * 31.1035
-
-                            OunceCard(ounceUsd * multiplier, currency, isAed, ounceUsd)
-                            Spacer(modifier = Modifier.height(32.dp))
-                        }
-
-                        item {
-                            GoldCalculator(data, isAed, 3.6725)
-                            Spacer(modifier = Modifier.height(32.dp))
-                        }
-
-                        item {
-                            MarketSummaryCard(data, isAed, 3.6725)
-                            Spacer(modifier = Modifier.height(32.dp))
-                        }
-
-                        item {
-                            LegalSection()
-                        }
+                        Spacer(modifier = Modifier.height(32.dp))
                     }
-                    is UiState.Error -> {
-                        item {
-                            Text(stringResource(R.string.error_loading), color = MaterialTheme.colorScheme.error)
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Button(
-                                onClick = { viewModel.fetchGoldPrice() },
-                                colors = ButtonDefaults.buttonColors(containerColor = PremiumColors.LuxuryGold, contentColor = Color.White),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text(stringResource(R.string.retry), fontWeight = FontWeight.Bold)
+
+                    when (uiState) {
+                        is UiState.Loading -> {
+                            item {
+                                Spacer(modifier = Modifier.height(32.dp))
+                                CircularProgressIndicator(color = PremiumColors.LuxuryGold)
+                            }
+                        }
+                        is UiState.Success -> {
+                            val data = (uiState as UiState.Success).data
+
+                            item {
+                                Text(
+                                    stringResource(R.string.indicative_rates_title),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = PremiumColors.LuxuryGold,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                                    textAlign = TextAlign.Start
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+
+                            item {
+                                val multiplier = if (isAed) 3.6725 else 1.0
+                                val currency = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd)
+
+                                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                                        GoldPriceCardSmall(Modifier.weight(1f), "24K", data.karat24 * multiplier, currency)
+                                        GoldPriceCardSmall(Modifier.weight(1f), "22K", data.karat22 * multiplier, currency)
+                                    }
+                                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                                        GoldPriceCardSmall(Modifier.weight(1f), "21K", data.karat21 * multiplier, currency)
+                                        GoldPriceCardSmall(Modifier.weight(1f), "18K", data.karat18 * multiplier, currency)
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(32.dp))
+                            }
+
+                            item {
+                                val multiplier = if (isAed) 3.6725 else 1.0
+                                val currency = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd)
+                                val ounceUsd = data.karat24 * 31.1035
+
+                                OunceCard(ounceUsd * multiplier, currency, isAed, ounceUsd)
+                                Spacer(modifier = Modifier.height(32.dp))
+                            }
+
+                            item {
+                                GoldCalculator(data, isAed, 3.6725)
+                                Spacer(modifier = Modifier.height(32.dp))
+                            }
+
+                            item {
+                                MarketSummaryCard(data, isAed, 3.6725)
+                                Spacer(modifier = Modifier.height(32.dp))
+                            }
+
+                            item {
+                                LegalSection()
+                            }
+                        }
+                        is UiState.Error -> {
+                            item {
+                                Text(stringResource(R.string.error_loading), color = MaterialTheme.colorScheme.error)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(
+                                    onClick = { viewModel.fetchGoldPrice() },
+                                    colors = ButtonDefaults.buttonColors(containerColor = PremiumColors.LuxuryGold, contentColor = Color.White),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(stringResource(R.string.retry), fontWeight = FontWeight.Bold)
+                                }
                             }
                         }
                     }
@@ -347,7 +375,7 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
     }
 }
 
-// ==================== الدوال المساعدة والرسوم المتحركة ====================
+// ==================== الدوال المساعدة والأنيميشن المحدثة ====================
 
 @Composable
 fun Modifier.bounceClick(): Modifier {
@@ -391,7 +419,7 @@ fun PulsingLiveDot() {
     Box(
         modifier = Modifier
             .size(6.dp)
-            .background(PremiumColors.SageGreen.copy(alpha = alpha), CircleShape)
+            .background(PremiumColors.LuxuryGold.copy(alpha = alpha), CircleShape)
     )
 }
 
@@ -399,9 +427,9 @@ fun PulsingLiveDot() {
 fun PremiumToggleButton(icon: ImageVector?, label: String, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        color = PremiumColors.SurfaceWhite,
+        color = PremiumColors.DarkNavyStart,
         shape = RoundedCornerShape(50.dp),
-        border = BorderStroke(1.dp, PremiumColors.BorderLight),
+        border = BorderStroke(1.dp, PremiumColors.LuxuryGold),
         shadowElevation = 2.dp,
         modifier = Modifier.bounceClick()
     ) {
@@ -413,7 +441,7 @@ fun PremiumToggleButton(icon: ImageVector?, label: String, onClick: () -> Unit) 
                 Icon(icon, contentDescription = null, tint = PremiumColors.LuxuryGold, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text(label, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = PremiumColors.TextPrimary)
+            Text(label, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = PremiumColors.TextOnDark)
         }
     }
 }
@@ -421,7 +449,7 @@ fun PremiumToggleButton(icon: ImageVector?, label: String, onClick: () -> Unit) 
 @Composable
 fun PremiumCardContainer(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = PremiumColors.SurfaceWhite,
+    backgroundColor: Color = PremiumColors.CardCream,
     backgroundBrush: Brush? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -455,10 +483,10 @@ fun GoldPriceCardSmall(modifier: Modifier, karat: String, price: Double, currenc
         ) {
             Box(
                 modifier = Modifier
-                    .background(PremiumColors.SageGreenLight, RoundedCornerShape(50.dp))
+                    .background(PremiumColors.DarkNavyStart, RoundedCornerShape(50.dp))
                     .padding(horizontal = 12.dp, vertical = 4.dp)
             ) {
-                Text(karat, fontSize = 12.sp, fontWeight = FontWeight.Black, color = PremiumColors.SageGreen)
+                Text(karat, fontSize = 12.sp, fontWeight = FontWeight.Black, color = PremiumColors.LuxuryGold)
             }
             
             Spacer(modifier = Modifier.height(12.dp))
@@ -473,23 +501,23 @@ fun GoldPriceCardSmall(modifier: Modifier, karat: String, price: Double, currenc
                     }
                 ),
                 fontSize = 13.sp,
-                color = PremiumColors.TextMuted,
+                color = Color(0xFF4A5568),
                 fontWeight = FontWeight.Medium
             )
             
             Spacer(modifier = Modifier.height(4.dp))
             
-            Text("%.2f".format(price), fontSize = 22.sp, fontWeight = FontWeight.Black, color = PremiumColors.TextPrimary)
+            Text("%.2f".format(price), fontSize = 22.sp, fontWeight = FontWeight.Black, color = PremiumColors.TextInsideCard)
             
             Spacer(modifier = Modifier.height(2.dp))
             
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (currency == stringResource(R.string.aed)) {
-                    Text("د.إ", fontSize = 11.sp, color = PremiumColors.TextFaint, fontWeight = FontWeight.Bold)
+                    Text("د.إ", fontSize = 11.sp, color = PremiumColors.LuxuryGoldDark, fontWeight = FontWeight.Bold)
                 } else {
-                    Text("$", fontSize = 11.sp, color = PremiumColors.TextFaint, fontWeight = FontWeight.Bold)
+                    Text("$", fontSize = 11.sp, color = PremiumColors.LuxuryGoldDark, fontWeight = FontWeight.Bold)
                 }
-                Text(" / ${stringResource(R.string.gram)}", fontSize = 11.sp, color = PremiumColors.TextFaint)
+                Text(" / ${stringResource(R.string.gram)}", fontSize = 11.sp, color = Color(0xFF718096))
             }
         }
     }
@@ -497,14 +525,7 @@ fun GoldPriceCardSmall(modifier: Modifier, karat: String, price: Double, currenc
 
 @Composable
 fun OunceCard(price: Double, currency: String, isAed: Boolean, priceUsd: Double) {
-    PremiumCardContainer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .bounceClick(),
-        backgroundBrush = Brush.linearGradient(
-            colors = listOf(PremiumColors.SurfaceWhite, PremiumColors.LuxuryGoldLight)
-        )
-    ) {
+    PremiumCardContainer(modifier = Modifier.fillMaxWidth().bounceClick()) {
         Column(modifier = Modifier.padding(24.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -514,12 +535,12 @@ fun OunceCard(price: Double, currency: String, isAed: Boolean, priceUsd: Double)
                 Text(
                     stringResource(R.string.global_ounce_title),
                     style = MaterialTheme.typography.titleMedium,
-                    color = PremiumColors.TextPrimary,
+                    color = PremiumColors.TextInsideCard,
                     fontWeight = FontWeight.Bold
                 )
                 Box(
                     modifier = Modifier
-                        .background(PremiumColors.LuxuryGold.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
+                        .background(PremiumColors.DarkNavyStart, RoundedCornerShape(8.dp))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text("XAU", fontWeight = FontWeight.Black, color = PremiumColors.LuxuryGold, fontSize = 12.sp, letterSpacing = 1.sp)
@@ -529,23 +550,23 @@ fun OunceCard(price: Double, currency: String, isAed: Boolean, priceUsd: Double)
             Spacer(modifier = Modifier.height(16.dp))
             
             Row(verticalAlignment = Alignment.Bottom) {
-                Text("%.2f".format(price), fontSize = 32.sp, fontWeight = FontWeight.Black, color = PremiumColors.TextPrimary)
+                Text("%.2f".format(price), fontSize = 32.sp, fontWeight = FontWeight.Black, color = PremiumColors.TextInsideCard)
                 Spacer(modifier = Modifier.width(6.dp))
                 if (isAed) {
-                    Text("د.إ", fontSize = 16.sp, color = PremiumColors.LuxuryGold, modifier = Modifier.padding(bottom = 6.dp), fontWeight = FontWeight.Bold)
+                    Text("د.إ", fontSize = 16.sp, color = PremiumColors.LuxuryGoldDark, modifier = Modifier.padding(bottom = 6.dp), fontWeight = FontWeight.Bold)
                 } else {
-                    Text("$", fontSize = 16.sp, color = PremiumColors.LuxuryGold, modifier = Modifier.padding(bottom = 6.dp), fontWeight = FontWeight.Bold)
+                    Text("$", fontSize = 16.sp, color = PremiumColors.LuxuryGoldDark, modifier = Modifier.padding(bottom = 6.dp), fontWeight = FontWeight.Bold)
                 }
             }
             
             Spacer(modifier = Modifier.height(4.dp))
             
             if (isAed) {
-                Text("%.2f USD".format(priceUsd), fontSize = 13.sp, color = PremiumColors.TextMuted, fontWeight = FontWeight.Medium)
+                Text("%.2f USD".format(priceUsd), fontSize = 13.sp, color = Color(0xFF4A5568), fontWeight = FontWeight.Medium)
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("%.2f ".format(priceUsd * 3.6725), fontSize = 13.sp, color = PremiumColors.TextMuted, fontWeight = FontWeight.Medium)
-                    Text("د.إ", fontSize = 12.sp, color = PremiumColors.TextMuted)
+                    Text("%.2f ".format(priceUsd * 3.6725), fontSize = 13.sp, color = Color(0xFF4A5568), fontWeight = FontWeight.Medium)
+                    Text("د.إ", fontSize = 12.sp, color = Color(0xFF4A5568))
                 }
             }
             
@@ -553,7 +574,7 @@ fun OunceCard(price: Double, currency: String, isAed: Boolean, priceUsd: Double)
             HorizontalDivider(color = PremiumColors.BorderLight)
             Spacer(modifier = Modifier.height(12.dp))
             
-            Text(stringResource(R.string.calculated_from_raw), fontSize = 11.sp, color = PremiumColors.TextFaint)
+            Text(stringResource(R.string.calculated_from_raw), fontSize = 11.sp, color = Color(0xFF718096))
         }
     }
 }
@@ -580,7 +601,7 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
             Text(
                 stringResource(R.string.gold_calculator),
                 style = MaterialTheme.typography.titleMedium,
-                color = PremiumColors.TextPrimary,
+                color = PremiumColors.TextInsideCard,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -600,15 +621,15 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = PremiumColors.SageGreen,
-                        unfocusedBorderColor = PremiumColors.BorderLight,
-                        focusedLabelColor = PremiumColors.SageGreen,
-                        unfocusedLabelColor = PremiumColors.TextMuted,
-                        focusedTextColor = PremiumColors.TextPrimary,
-                        unfocusedTextColor = PremiumColors.TextPrimary,
-                        cursorColor = PremiumColors.SageGreen,
-                        focusedContainerColor = PremiumColors.SurfaceWhite,
-                        unfocusedContainerColor = PremiumColors.SurfaceWhite
+                        focusedBorderColor = PremiumColors.LuxuryGold,
+                        unfocusedBorderColor = Color(0xFFCBD5E1),
+                        focusedLabelColor = PremiumColors.LuxuryGold,
+                        unfocusedLabelColor = Color(0xFF718096),
+                        focusedTextColor = PremiumColors.TextInsideCard,
+                        unfocusedTextColor = PremiumColors.TextInsideCard,
+                        cursorColor = PremiumColors.LuxuryGold,
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
                     )
                 )
 
@@ -623,8 +644,8 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
                         onClick = { expanded = true },
                         modifier = Modifier.fillMaxSize(),
                         shape = RoundedCornerShape(12.dp),
-                        color = PremiumColors.SurfaceWhite,
-                        border = BorderStroke(1.dp, if (expanded) PremiumColors.SageGreen else PremiumColors.BorderLight)
+                        color = Color.White,
+                        border = BorderStroke(1.dp, if (expanded) PremiumColors.LuxuryGold else Color(0xFFCBD5E1))
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 16.dp),
@@ -635,19 +656,19 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
                                 Text(
                                     text = "العيار / Karat",
                                     fontSize = 12.sp,
-                                    color = if (expanded) PremiumColors.SageGreen else PremiumColors.TextMuted
+                                    color = if (expanded) PremiumColors.LuxuryGold else Color(0xFF718096)
                                 )
                                 Text(
                                     text = "${selectedKarat}K",
                                     fontSize = 16.sp,
-                                    color = PremiumColors.TextPrimary,
+                                    color = PremiumColors.TextInsideCard,
                                     fontWeight = FontWeight.Medium
                                 )
                             }
                             Icon(
                                 Icons.Default.KeyboardArrowDown,
                                 contentDescription = null,
-                                tint = PremiumColors.TextMuted
+                                tint = Color(0xFF718096)
                             )
                         }
                     }
@@ -655,7 +676,7 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
-                        modifier = Modifier.background(PremiumColors.SurfaceWhite)
+                        modifier = Modifier.background(Color.White)
                     ) {
                         listOf(24, 22, 21, 18).forEach { k ->
                             DropdownMenuItem(
@@ -663,11 +684,11 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
                                     Text(
                                         "${k}K", 
                                         fontWeight = if (selectedKarat == k) FontWeight.Bold else FontWeight.Normal,
-                                        color = if (selectedKarat == k) PremiumColors.SageGreen else PremiumColors.TextPrimary
+                                        color = if (selectedKarat == k) PremiumColors.LuxuryGold else PremiumColors.TextInsideCard
                                     ) 
                                 },
                                 onClick = { selectedKarat = k; expanded = false },
-                                modifier = Modifier.background(PremiumColors.SurfaceWhite)
+                                modifier = Modifier.background(Color.White)
                             )
                         }
                     }
@@ -679,8 +700,8 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(PremiumColors.BackgroundBeige, RoundedCornerShape(16.dp))
-                    .border(1.dp, PremiumColors.BorderLight, RoundedCornerShape(16.dp))
+                    .background(Color(0xFFF7FAFC), RoundedCornerShape(16.dp))
+                    .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(16.dp))
                     .padding(20.dp)
             ) {
                 Row(
@@ -688,20 +709,20 @@ fun GoldCalculator(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.approx_value), fontSize = 14.sp, color = PremiumColors.TextMuted, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.approx_value), fontSize = 14.sp, color = Color(0xFF4A5568), fontWeight = FontWeight.Medium)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("%.2f ".format(result), fontWeight = FontWeight.Black, fontSize = 24.sp, color = PremiumColors.LuxuryGold)
+                        Text("%.2f ".format(result), fontWeight = FontWeight.Black, fontSize = 24.sp, color = PremiumColors.LuxuryGoldDark)
                         if (isAed) {
-                            Text("د.إ", fontSize = 16.sp, color = PremiumColors.LuxuryGold, fontWeight = FontWeight.Bold)
+                            Text("د.إ", fontSize = 16.sp, color = PremiumColors.LuxuryGoldDark, fontWeight = FontWeight.Bold)
                         } else {
-                            Text("$", fontWeight = FontWeight.Bold, fontSize = 24.sp, color = PremiumColors.LuxuryGold)
+                            Text("$", fontWeight = FontWeight.Bold, fontSize = 24.sp, color = PremiumColors.LuxuryGoldDark)
                         }
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            Text(stringResource(R.string.calc_disclaimer), fontSize = 11.sp, color = PremiumColors.TextFaint, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+            Text(stringResource(R.string.calc_disclaimer), fontSize = 11.sp, color = Color(0xFF718096), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
     }
 }
@@ -711,10 +732,7 @@ fun MarketSummaryCard(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
     val multiplier = if (isAed) aedRate else 1.0
     val currency = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd)
 
-    PremiumCardContainer(
-        modifier = Modifier.fillMaxWidth(),
-        backgroundColor = PremiumColors.LuxuryGoldLight.copy(alpha = 0.7f)
-    ) {
+    PremiumCardContainer(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(24.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.size(5.dp).background(PremiumColors.LuxuryGoldDark, CircleShape))
@@ -737,7 +755,7 @@ fun MarketSummaryCard(data: GoldPriceModel, isAed: Boolean, aedRate: Double) {
                 ),
                 fontSize = 14.sp,
                 lineHeight = 22.sp,
-                color = PremiumColors.TextPrimaryDark,
+                color = PremiumColors.TextInsideCard,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -776,19 +794,5 @@ fun formatTime(isoTime: String): String {
         outSdf.format(date ?: Date())
     } catch (e: Exception) {
         isoTime
-    }
-}
-
-@Composable
-fun AdBanner() {
-    // دالة فارغة مؤقتة لمنع خطأ البيلد. 
-    // يمكنك استبدالها بكود الإعلانات الحقيقي الخاص بك (AdMob).
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        // Text("Ad Banner Placeholder", color = Color.Gray)
     }
 }
