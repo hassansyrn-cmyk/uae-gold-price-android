@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Daily Gold Price</string>
-    <string name="app_subtitle">Live Gold Rates, Reimagined</string>
+    <string name="app_subtitle">Spot Gold Prices</string>
     <string name="gold_price_24k">Gold 24K</string>
     <string name="gold_price_22k">Gold 22K</string>
     <string name="gold_price_21k">Gold 21K</string>
@@ -16,14 +16,6 @@
     <string name="notification_channel_name">Gold Price Updates</string>
     <string name="notification_body_daily_ounce">Today\'s global gold ounce price: %1$s USD.</string>
     <string name="notification_body_large_change">The ounce price changed by %2$s%%. Current price: %1$s USD.</string>
-    <string name="chart_title">Global Gold Ounce Price</string>
-    <string name="chart_source_lbma">Historical source: LBMA • USD benchmark</string>
-    <string name="chart_no_data">The chart will appear after enough data has been collected.</string>
-    <string name="range_hour">Hour</string>
-    <string name="range_day">Day</string>
-    <string name="range_week">Week</string>
-    <string name="range_month">Month</string>
-    <string name="range_year">Year</string>
     <string name="price_alerts">Price Alerts</string>
     <string name="add_price_alert">Add Alert</string>
     <string name="alert_target_price">Target price in USD</string>

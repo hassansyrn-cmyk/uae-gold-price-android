@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">أسعار الذهب اليومية</string>
-    <string name="app_subtitle">أسعار ذهب فورية بلمسة فخامة</string>
+    <string name="app_subtitle">أسعار الذهب الفورية</string>
     <string name="gold_price_24k">ذهب عيار 24</string>
     <string name="gold_price_22k">ذهب عيار 22</string>
     <string name="gold_price_21k">ذهب عيار 21</string>
@@ -16,14 +16,6 @@
     <string name="notification_channel_name">تحديثات أسعار الذهب</string>
     <string name="notification_body_daily_ounce">سعر أونصة الذهب العالمي اليوم: %1$s دولار.</string>
     <string name="notification_body_large_change">تغير سعر الأونصة بنسبة %2$s%%. السعر الحالي: %1$s دولار.</string>
-    <string name="chart_title">سعر الأونصة العالمي</string>
-    <string name="chart_source_lbma">المصدر التاريخي: LBMA • السعر المرجعي بالدولار</string>
-    <string name="chart_no_data">سيظهر الرسم البياني بعد تسجيل بيانات كافية.</string>
-    <string name="range_hour">ساعة</string>
-    <string name="range_day">يوم</string>
-    <string name="range_week">أسبوع</string>
-    <string name="range_month">شهر</string>
-    <string name="range_year">سنة</string>
     <string name="price_alerts">تنبيهات السعر</string>
     <string name="add_price_alert">إضافة تنبيه</string>
     <string name="alert_target_price">السعر المستهدف بالدولار</string>
