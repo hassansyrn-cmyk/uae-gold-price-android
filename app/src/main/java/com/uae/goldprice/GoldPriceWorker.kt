@@ -38,6 +38,7 @@ class GoldPriceWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     private fun checkAndNotify(currentPriceUsd: Double) {
+        checkCustomAlerts(currentPriceUsd)
         val previousPrice = prefs.getFloat("last_ounce_usd", 0f).toDouble()
         val now = System.currentTimeMillis()
         val lastDailyNotification = prefs.getLong("last_daily_notification", 0L)
@@ -73,6 +74,29 @@ class GoldPriceWorker(appContext: Context, workerParams: WorkerParameters) :
         }
 
         prefs.edit().putFloat("last_ounce_usd", currentPriceUsd.toFloat()).apply()
+    }
+
+    private fun checkCustomAlerts(currentPriceUsd: Double) {
+        PriceAlertStore.read(applicationContext)
+            .filter { it.enabled }
+            .forEach { alert ->
+                val reached = if (alert.directionAbove) {
+                    currentPriceUsd >= alert.targetUsd
+                } else {
+                    currentPriceUsd <= alert.targetUsd
+                }
+                if (reached) {
+                    sendNotification(
+                        R.string.notification_title_alert,
+                        applicationContext.getString(
+                            R.string.alert_triggered_body,
+                            "%.2f".format(currentPriceUsd)
+                        ),
+                        (alert.id % Int.MAX_VALUE).toInt()
+                    )
+                    PriceAlertStore.disable(applicationContext, alert.id)
+                }
+            }
     }
 
     private fun sendNotification(titleRes: Int, body: String, notificationId: Int) {

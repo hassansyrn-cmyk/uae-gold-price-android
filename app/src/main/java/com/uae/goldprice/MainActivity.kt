@@ -316,6 +316,8 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                                 OunceCard(ounceUsd, stringResource(R.string.usd), false, ounceUsd)
                                 Spacer(modifier = Modifier.height(16.dp))
                                 OunceHistoryChart(history)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                PriceAlertSection(ounceUsd)
                                 Spacer(modifier = Modifier.height(32.dp))
                             }
 
@@ -532,7 +534,12 @@ fun GoldPriceCardSmall(modifier: Modifier, karat: String, price: Double, currenc
 
 @Composable
 fun OunceCard(price: Double, currency: String, isAed: Boolean, priceUsd: Double) {
-    PremiumCardContainer(modifier = Modifier.fillMaxWidth().bounceClick()) {
+    PremiumCardContainer(
+        modifier = Modifier.fillMaxWidth().bounceClick(),
+        backgroundBrush = Brush.linearGradient(
+            listOf(PremiumColors.CardCream, PremiumColors.LuxuryGoldLight)
+        )
+    ) {
         Column(modifier = Modifier.padding(24.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -813,7 +820,8 @@ fun OunceHistoryChart(points: List<HistoryPoint>) {
         ChartRange.HOUR to stringResource(R.string.range_hour),
         ChartRange.DAY to stringResource(R.string.range_day),
         ChartRange.WEEK to stringResource(R.string.range_week),
-        ChartRange.MONTH to stringResource(R.string.range_month)
+        ChartRange.MONTH to stringResource(R.string.range_month),
+        ChartRange.YEAR to stringResource(R.string.range_year)
     )
 
     PremiumCardContainer(modifier = Modifier.fillMaxWidth()) {
@@ -823,6 +831,12 @@ fun OunceHistoryChart(points: List<HistoryPoint>) {
                 style = MaterialTheme.typography.titleMedium,
                 color = PremiumColors.TextInsideCard,
                 fontWeight = FontWeight.Bold
+            )
+            Text(
+                stringResource(R.string.chart_source_lbma),
+                color = PremiumColors.LuxuryGoldDark,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(
@@ -881,5 +895,134 @@ fun OunceHistoryChart(points: List<HistoryPoint>) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun PriceAlertSection(currentPriceUsd: Double) {
+    val context = LocalContext.current
+    var alerts by remember { mutableStateOf(PriceAlertStore.read(context)) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    PremiumCardContainer(
+        modifier = Modifier.fillMaxWidth(),
+        backgroundBrush = Brush.linearGradient(
+            listOf(PremiumColors.CardCream, PremiumColors.LuxuryGoldLight)
+        )
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        stringResource(R.string.price_alerts),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = PremiumColors.TextInsideCard,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        "%.2f USD".format(currentPriceUsd),
+                        color = PremiumColors.LuxuryGoldDark,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 13.sp
+                    )
+                }
+                Button(
+                    onClick = { showDialog = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PremiumColors.DarkNavyStart,
+                        contentColor = PremiumColors.LuxuryGold
+                    ),
+                    shape = RoundedCornerShape(14.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
+                ) {
+                    Text(stringResource(R.string.add_price_alert), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            if (alerts.isEmpty()) {
+                Text(stringResource(R.string.no_alerts), color = Color(0xFF718096), fontSize = 12.sp)
+            } else {
+                alerts.forEach { alert ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            if (alert.directionAbove) "≥" else "≤",
+                            color = PremiumColors.LuxuryGoldDark,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Black
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            "%.2f USD".format(alert.targetUsd),
+                            color = PremiumColors.TextInsideCard,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f)
+                        )
+                        TextButton(onClick = {
+                            alerts = PriceAlertStore.remove(context, alert.id)
+                        }) {
+                            Text(stringResource(R.string.remove_alert), color = Color(0xFF9B2C2C), fontSize = 11.sp)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (showDialog) {
+        var targetText by remember { mutableStateOf("") }
+        var directionAbove by remember { mutableStateOf(true) }
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(stringResource(R.string.add_price_alert), fontWeight = FontWeight.Bold) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.alert_when_reaches), color = Color(0xFF718096), fontSize = 13.sp)
+                    OutlinedTextField(
+                        value = targetText,
+                        onValueChange = { targetText = it.filter { char -> char.isDigit() || char == '.' } },
+                        label = { Text(stringResource(R.string.alert_target_price)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            selected = directionAbove,
+                            onClick = { directionAbove = true },
+                            label = { Text(stringResource(R.string.alert_above)) }
+                        )
+                        FilterChip(
+                            selected = !directionAbove,
+                            onClick = { directionAbove = false },
+                            label = { Text(stringResource(R.string.alert_below)) }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val target = targetText.toDoubleOrNull()
+                        if (target != null && target > 0) {
+                            alerts = PriceAlertStore.add(context, target, directionAbove)
+                            showDialog = false
+                        }
+                    }
+                ) { Text(stringResource(R.string.save_alert), color = PremiumColors.LuxuryGoldDark) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 }
