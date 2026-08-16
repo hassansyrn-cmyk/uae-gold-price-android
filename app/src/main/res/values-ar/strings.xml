@@ -13,6 +13,15 @@
     <string name="loading">جاري التحميل...</string>
     <string name="error_loading">خطأ في تحميل البيانات</string>
     <string name="retry">إعادة المحاولة</string>
+    <string name="notification_channel_name">تحديثات أسعار الذهب</string>
+    <string name="notification_body_daily_ounce">سعر أونصة الذهب العالمي اليوم: %1$s دولار.</string>
+    <string name="notification_body_large_change">تغير سعر الأونصة بنسبة %2$s%%. السعر الحالي: %1$s دولار.</string>
+    <string name="chart_title">سعر الأونصة العالمي</string>
+    <string name="chart_no_data">سيظهر الرسم البياني بعد تسجيل بيانات كافية.</string>
+    <string name="range_hour">ساعة</string>
+    <string name="range_day">يوم</string>
+    <string name="range_week">أسبوع</string>
+    <string name="range_month">شهر</string>
     <string name="notification_body">سعر الذهب المباشر: %1$s درهم. اضغط للتحقق من جميع الأسعار.</string>
     <string name="notification_title_alert">تنبيه سعر الذهب</string>
     <string name="notification_title_daily">تحديث سعر الذهب اليومي</string>

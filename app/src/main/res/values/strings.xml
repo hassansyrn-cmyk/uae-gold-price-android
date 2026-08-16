@@ -13,6 +13,15 @@
     <string name="loading">Loading...</string>
     <string name="error_loading">Error loading data</string>
     <string name="retry">Retry</string>
+    <string name="notification_channel_name">Gold Price Updates</string>
+    <string name="notification_body_daily_ounce">Today\'s global gold ounce price: %1$s USD.</string>
+    <string name="notification_body_large_change">The ounce price changed by %2$s%%. Current price: %1$s USD.</string>
+    <string name="chart_title">Global Gold Ounce Price</string>
+    <string name="chart_no_data">The chart will appear after enough data has been collected.</string>
+    <string name="range_hour">Hour</string>
+    <string name="range_day">Day</string>
+    <string name="range_week">Week</string>
+    <string name="range_month">Month</string>
     <string name="notification_body">Live Gold Price: %1$s AED. Tap to check all rates.</string>
     <string name="notification_title_alert">Gold Price Alert</string>
     <string name="notification_title_daily">Daily Gold Price Update</string>

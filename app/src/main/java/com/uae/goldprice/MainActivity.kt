@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -154,6 +157,7 @@ fun PremiumSplashScreen(onSplashFinished: () -> Unit) {
 @Composable
 fun GoldPriceScreen(viewModel: GoldViewModel) {
     val uiState by viewModel.uiState.collectAsState()
+    val history by viewModel.history.collectAsState()
     var isAed by remember { mutableStateOf(true) }
     val context = LocalContext.current
 
@@ -308,6 +312,14 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                             val data = (uiState as UiState.Success).data
 
                             item {
+                                val ounceUsd = data.karat24 * 31.1035
+                                OunceCard(ounceUsd, stringResource(R.string.usd), false, ounceUsd)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OunceHistoryChart(history)
+                                Spacer(modifier = Modifier.height(32.dp))
+                            }
+
+                            item {
                                 Text(
                                     stringResource(R.string.indicative_rates_title),
                                     style = MaterialTheme.typography.titleMedium,
@@ -333,15 +345,6 @@ fun GoldPriceScreen(viewModel: GoldViewModel) {
                                         GoldPriceCardSmall(Modifier.weight(1f), "18K", data.karat18 * multiplier, currency)
                                     }
                                 }
-                                Spacer(modifier = Modifier.height(32.dp))
-                            }
-
-                            item {
-                                val multiplier = if (isAed) 3.6725 else 1.0
-                                val currency = if (isAed) stringResource(R.string.aed) else stringResource(R.string.usd)
-                                val ounceUsd = data.karat24 * 31.1035
-
-                                OunceCard(ounceUsd * multiplier, currency, isAed, ounceUsd)
                                 Spacer(modifier = Modifier.height(32.dp))
                             }
 
@@ -798,5 +801,85 @@ fun formatTime(isoTime: String): String {
         outSdf.format(date ?: Date())
     } catch (e: Exception) {
         isoTime
+    }
+}
+
+@Composable
+fun OunceHistoryChart(points: List<HistoryPoint>) {
+    var selectedRange by remember { mutableStateOf(ChartRange.DAY) }
+    val now = System.currentTimeMillis()
+    val visiblePoints = points.filter { it.time >= now - selectedRange.durationMillis }
+    val labels = listOf(
+        ChartRange.HOUR to stringResource(R.string.range_hour),
+        ChartRange.DAY to stringResource(R.string.range_day),
+        ChartRange.WEEK to stringResource(R.string.range_week),
+        ChartRange.MONTH to stringResource(R.string.range_month)
+    )
+
+    PremiumCardContainer(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                stringResource(R.string.chart_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = PremiumColors.TextInsideCard,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                labels.forEach { (range, label) ->
+                    FilterChip(
+                        selected = selectedRange == range,
+                        onClick = { selectedRange = range },
+                        label = { Text(label, fontSize = 11.sp) },
+                        modifier = Modifier.weight(1f),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = PremiumColors.DarkNavyStart,
+                            selectedLabelColor = PremiumColors.LuxuryGold
+                        )
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            if (visiblePoints.size < 2) {
+                Text(
+                    stringResource(R.string.chart_no_data),
+                    color = Color(0xFF718096),
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(vertical = 28.dp)
+                )
+            } else {
+                val minPrice = visiblePoints.minOf { it.price }
+                val maxPrice = visiblePoints.maxOf { it.price }
+                val range = (maxPrice - minPrice).coerceAtLeast(0.01)
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(190.dp)
+                ) {
+                    val path = Path()
+                    visiblePoints.forEachIndexed { index, point ->
+                        val x = if (visiblePoints.size == 1) 0f
+                        else size.width * index / (visiblePoints.size - 1).toFloat()
+                        val y = size.height - ((point.price - minPrice) / range).toFloat() * size.height
+                        if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
+                    }
+                    drawPath(
+                        path = path,
+                        color = PremiumColors.LuxuryGold,
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("%.2f USD".format(minPrice), fontSize = 11.sp, color = Color(0xFF718096))
+                    Text("%.2f USD".format(maxPrice), fontSize = 11.sp, color = PremiumColors.LuxuryGoldDark)
+                }
+            }
+        }
     }
 }
