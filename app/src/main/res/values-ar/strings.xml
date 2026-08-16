@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">أسعار الذهب اليومية</string>
-    <string name="app_subtitle">أسعار ذهب فورية بلمسة فخامة</string>
+    <string name="app_subtitle">أسعار الذهب الفورية</string>
     <string name="gold_price_24k">ذهب عيار 24</string>
     <string name="gold_price_22k">ذهب عيار 22</string>
     <string name="gold_price_21k">ذهب عيار 21</string>
@@ -13,6 +13,21 @@
     <string name="loading">جاري التحميل...</string>
     <string name="error_loading">خطأ في تحميل البيانات</string>
     <string name="retry">إعادة المحاولة</string>
+    <string name="notification_channel_name">تحديثات أسعار الذهب</string>
+    <string name="notification_body_daily_ounce">سعر أونصة الذهب العالمي اليوم: %1$s دولار.</string>
+    <string name="notification_body_large_change">تغير سعر الأونصة بنسبة %2$s%%. السعر الحالي: %1$s دولار.</string>
+    <string name="price_alerts">تنبيهات السعر</string>
+    <string name="add_price_alert">إضافة تنبيه</string>
+    <string name="alert_target_price">السعر المستهدف بالدولار</string>
+    <string name="alert_when_reaches">عند وصول السعر إلى</string>
+    <string name="alert_above">أعلى من أو يساوي</string>
+    <string name="alert_below">أقل من أو يساوي</string>
+    <string name="save_alert">حفظ التنبيه</string>
+    <string name="cancel">إلغاء</string>
+    <string name="no_alerts">لا توجد تنبيهات مضافة.</string>
+    <string name="remove_alert">حذف</string>
+    <string name="alert_enabled">فعال</string>
+    <string name="alert_triggered_body">وصل سعر الأونصة إلى %1$s دولار.</string>
     <string name="notification_body">سعر الذهب المباشر: %1$s درهم. اضغط للتحقق من جميع الأسعار.</string>
     <string name="notification_title_alert">تنبيه سعر الذهب</string>
     <string name="notification_title_daily">تحديث سعر الذهب اليومي</string>
