@@ -101,6 +101,15 @@ class GoldPriceWorker(appContext: Context, workerParams: WorkerParameters) :
 
     private fun sendNotification(titleRes: Int, body: String, notificationId: Int) {
         val context = applicationContext
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(
+                    context,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+        }
         val channelId = "gold_price_updates"
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

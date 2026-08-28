@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -85,7 +86,7 @@ class MainActivity : ComponentActivity() {
         val prefs = newBase.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val languageCode = prefs.getString("language", "ar") ?: "ar"
 
-        val locale = Locale(languageCode)
+        val locale = Locale.forLanguageTag(languageCode)
         Locale.setDefault(locale)
 
         val config = Configuration(newBase.resources.configuration)
@@ -97,6 +98,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         try { MobileAds.initialize(this) {} } catch (e: Exception) { e.printStackTrace() }
