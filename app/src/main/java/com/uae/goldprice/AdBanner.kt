@@ -15,7 +15,7 @@ fun AdBanner(modifier: Modifier = Modifier) {
         factory = { context ->
             AdView(context).apply {
                 setAdSize(AdSize.BANNER)
-                adUnitId = "ca-app-pub-3940256099942544/6300978111" // Test Banner ID
+                adUnitId = context.getString(R.string.admob_banner_unit_id)
                 try {
                     loadAd(AdRequest.Builder().build())
                 } catch (e: Exception) {

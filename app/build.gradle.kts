@@ -50,7 +50,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+            resValue("string", "admob_banner_unit_id", "ca-app-pub-3940256099942544/6300978111")
+        }
         release {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-7778383086464835~4222444861"
+            resValue("string", "admob_banner_unit_id", "ca-app-pub-7778383086464835/8493962443")
             isMinifyEnabled = false
 
             val hasEnv = !System.getenv("KEYSTORE_FILE").isNullOrEmpty()
