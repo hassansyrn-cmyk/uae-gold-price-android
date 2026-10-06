@@ -22,8 +22,8 @@ android {
         applicationId = "com.uae.goldprice"
         minSdk = 24
         targetSdk = 36
-        versionCode = 5
-        versionName = "1.3.0"
+        versionCode = 6
+        versionName = "1.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,7 +57,8 @@ android {
         release {
             manifestPlaceholders["admobAppId"] = "ca-app-pub-7778383086464835~4222444861"
             resValue("string", "admob_banner_unit_id", "ca-app-pub-7778383086464835/8493962443")
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
 
             val hasEnv = !System.getenv("KEYSTORE_FILE").isNullOrEmpty()
             if (hasEnv || keystorePropertiesFile.exists()) {
@@ -87,6 +88,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.fragment)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
