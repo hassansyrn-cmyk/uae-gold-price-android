@@ -90,7 +90,10 @@ try:
     # Verify permission denial does not prevent startup.
     shell('am', 'force-stop', PKG)
     shell('pm', 'revoke', PKG, 'android.permission.POST_NOTIFICATIONS')
+    shell('pm', 'set-permission-flags', PKG, 'android.permission.POST_NOTIFICATIONS', 'user-set', 'user-fixed')
     launch()
+    running('notification-permission-denied')
+    shell('pm', 'clear-permission-flags', PKG, 'android.permission.POST_NOTIFICATIONS', 'user-set', 'user-fixed')
     shell('pm', 'grant', PKG, 'android.permission.POST_NOTIFICATIONS')
     shell('input', 'keyevent', '4')
     launch()
